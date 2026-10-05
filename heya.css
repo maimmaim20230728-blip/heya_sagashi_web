@@ -1,0 +1,167 @@
+/* わたしに合う部屋さがし・そよぎ アプリ固有の見た目（style.css のあとに読む。共通部分は style.css）
+   ・色はPDF版と同じ考え：緑＝すること、水色＝確かめかた、さんご色＝気をつけて。印（根拠の強さ）は6色の小さな札 */
+:root{
+  --aqua:#2a7fa8; --aqua-lite:#e6f4fa; --aqua-edge:#7ccae8;
+  --coral:#b5493e; --coral-lite:#fdf1ef; --coral-edge:#eba79f;
+  --green-lite:#e6f5ee; --green-edge:#6ccba9;
+  --plum:#7a4a93; --plum-lite:#f5eefa; --gold:#8a6a10; --gold-lite:#fbf5e3; --gold-edge:#e0c77a;
+}
+body[data-theme="dark"]{
+  --aqua:#8fd3f0; --aqua-lite:#1d2e36; --aqua-edge:#3f7f99;
+  --coral:#f2a59c; --coral-lite:#3a2422; --coral-edge:#8a4a43;
+  --green-lite:#1f332a; --green-edge:#3f8a6a;
+  --plum:#d7b6ea; --plum-lite:#2f2536; --gold:#f0d58a; --gold-lite:#342d17; --gold-edge:#7d6a2a;
+}
+
+/* すぐ閉じる（app.js quickExit・2026-10-05）。ヘッダーの右にいつも出す。
+   重ねた画面（カード・出典の一覧・プライバシーポリシー・はじめての つかいかた・確かめの窓）は、どれもヘッダーの下から出す＝このボタンが隠れない */
+.qx-btn{
+  flex:none; min-height:44px; min-width:44px; padding:4px 10px;
+  border:2px solid #fff; border-radius:10px; background:#fff; color:#1a1a1a;
+  font-family:inherit; font-size:.82em; font-weight:800; line-height:1.2; white-space:nowrap;
+}
+.ov{ top:var(--hd-h, 0px); }
+.ov:not(.ask-ov){ padding-top:20px; }
+.ov.ask-ov{ padding-top:16px; }
+/* 重ねた画面のあいだは、ヘッダーの Language と名前（ホームへ）は押せない（前と同じ。裏の画面だけが変わるのを防ぐ）。押せるのは すぐ閉じる だけ */
+body:has(.ov) #lang-wrap, body:has(.ov) #hd-title{ pointer-events:none; opacity:.55; }
+/* 幅 339px まで：すき間を詰めて、英語の短い名前も2行に入れる（320px で「A Hom…」に切れないように） */
+@media (max-width:339px){ header#hd{ gap:8px; } #hd-right{ gap:8px; } .qx-btn{ padding:4px 6px; } }
+/* 名前が1行に入らない幅では2行（app.js fitTitle。折るのは app.nameWrap の「|」と英語の空白だけ） */
+#hd-title.two{ white-space:normal; word-break:keep-all; line-height:1.22; font-size:.84em; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; text-overflow:clip; }
+html.qx-hide body{ visibility:hidden; }
+
+/* 国や自治体のアプリではありません（ホームのいちばん上） */
+.notapp{ background:var(--card); border:2px solid var(--aqua-edge); border-radius:12px; padding:10px 12px; margin:0 0 14px; }
+.notapp-p{ margin:0 0 8px; font-size:.92em; }
+.notapp-btn{ width:100%; min-height:48px; border-color:var(--aqua); color:var(--aqua); }
+.home-lead{ margin:0 0 6px; }
+
+/* 気になること・段階 */
+.concern-chips .chip{ text-align:left; line-height:1.35; }
+.stage-list{ display:flex; flex-direction:column; gap:10px; }
+.stage-btn{
+  display:flex; align-items:flex-start; gap:12px; width:100%; text-align:left;
+  min-height:64px; padding:12px 14px; border:2px solid var(--brand); border-radius:14px;
+  background:var(--card); color:var(--ink); font-family:inherit; font-size:1em;
+}
+.stage-no{ flex:none; width:2em; height:2em; border-radius:50%; background:var(--brand); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; }
+.stage-txt{ display:flex; flex-direction:column; gap:2px; min-width:0; }
+.stage-lbl{ font-weight:800; font-size:1.08em; }
+.stage-lead{ color:var(--sub); font-size:.9em; }
+.stage-n{ font-size:.85em; color:var(--sub); display:flex; flex-wrap:wrap; gap:6px 10px; align-items:center; }
+.stage-fit{ background:var(--brand); color:#fff; border-radius:999px; padding:0 10px; font-weight:700; }
+
+/* カードの一覧 */
+.stage-chips{ margin:0 0 10px; }
+.stage-chips .chip{ font-size:.88em; }
+.fit-toggle{ margin:0 0 10px; }
+.card-list{ list-style:none; margin:0; padding:0; }
+.card-row{ margin:0 0 8px; }
+.card-btn{
+  display:flex; align-items:flex-start; gap:10px; width:100%; text-align:left;
+  min-height:56px; padding:10px 12px; border:2px solid var(--line); border-radius:12px;
+  background:var(--card); color:var(--ink); font-family:inherit; font-size:1em;
+}
+.card-row.fit .card-btn{ border-color:var(--brand); }
+.cr-no{ flex:none; min-width:1.9em; height:1.9em; border-radius:50%; background:var(--green-lite); color:var(--brand); border:1.5px solid var(--green-edge); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:.9em; }
+.cr-txt{ display:flex; flex-direction:column; gap:4px; min-width:0; }
+.cr-title{ font-weight:700; line-height:1.45; overflow-wrap:anywhere; }
+.cr-meta{ display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+.fit-mark{ display:inline-block; background:var(--brand); color:#fff; border-radius:999px; padding:0 10px; font-size:.8em; font-weight:700; }
+.done-mark{ color:var(--brand); font-size:.82em; font-weight:700; }
+
+/* 印（根拠の強さ） */
+.tag{ display:inline-block; border:1.5px solid; border-radius:6px; padding:0 8px; font-size:.78em; font-weight:700; line-height:1.6; }
+.tag-law{ color:var(--brand); border-color:var(--green-edge); background:var(--green-lite); }
+.tag-rule{ color:var(--brand); border-color:var(--green-edge); background:var(--card); }
+.tag-guide{ color:var(--aqua); border-color:var(--aqua-edge); background:var(--aqua-lite); }
+.tag-court{ color:var(--plum); border-color:#c7a9d8; background:var(--plum-lite); }
+.tag-warn{ color:var(--gold); border-color:var(--gold-edge); background:var(--gold-lite); }
+.tag-tip{ color:var(--sub); border-color:var(--line); background:var(--card); }
+
+/* 重ねた画面の題は、読み上げのために focus するだけ（枠は出さない） */
+.ov [tabindex="-1"]:focus{ outline:none; }
+/* 重ねた画面（とじるボタンの分だけ下をあける） */
+.heya-ov{ padding-bottom:calc(100px + env(safe-area-inset-bottom)); }
+.heya-ov > *:not(.ov-close){ max-width:680px; margin-left:auto; margin-right:auto; }
+/* プライバシーポリシー（heya_ui.js openPrivacy。中身は privacy.html の main） */
+.pp-box h1{ font-size:1.3em; color:var(--brand); border-bottom:2px solid var(--line); padding-bottom:8px; margin:0 0 10px; outline:none; }
+.pp-box h2{ font-size:1.08em; color:var(--brand); margin:26px 0 6px; }
+.pp-box p, .pp-box li{ line-height:1.8; overflow-wrap:anywhere; }
+.pp-box ul{ padding-left:1.3em; }
+.pp-box .meta{ color:var(--sub); font-size:.85em; }
+.pp-box a{ color:var(--brand); }
+.card-full .cf-head{ display:flex; gap:10px; align-items:flex-start; }
+.cf-no{ flex:none; min-width:2em; height:2em; border-radius:50%; background:var(--brand); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; }
+.cf-title{ font-size:1.2em; line-height:1.45; margin:0; outline:none; }
+.cf-meta{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:10px 0 6px; }
+.cf-stage{ color:var(--sub); font-size:.88em; }
+.cf-concerns{ display:flex; flex-wrap:wrap; gap:6px; margin:0 0 6px; }
+.mini-chip{ border:1.5px solid var(--line); border-radius:999px; padding:0 10px; font-size:.8em; color:var(--sub); }
+.cf-sec{ background:var(--card); border:2px solid var(--line); border-radius:12px; padding:8px 12px; margin:10px 0; }
+.cf-lbl{ font-size:.9em; margin:0 0 4px; }
+.cf-p{ margin:0 0 6px; line-height:1.75; }
+.cf-p:last-child{ margin-bottom:0; }
+.cf-look{ border-color:var(--green-edge); } .cf-look .cf-lbl{ color:var(--brand); }
+.cf-why .cf-lbl{ color:var(--sub); }
+.cf-warn{ border-color:var(--coral-edge); background:var(--coral-lite); } .cf-warn .cf-lbl{ color:var(--coral); }
+.cf-how{ border-color:var(--aqua-edge); } .cf-how .cf-lbl{ color:var(--aqua); }
+.cf-note{ border-style:dashed; }
+.done-btn{ width:100%; margin:4px 0 6px; }
+.done-btn.on{ border-color:var(--brand); color:var(--brand); }
+.cf-rowlist{ margin:0; padding-left:1.2em; }
+.cf-rowlist li{ margin:0 0 4px; }
+.src-list{ list-style:none; margin:0; padding:0; }
+.src-list li{ padding:8px 0; border-bottom:1px solid var(--line); display:flex; flex-direction:column; gap:2px; overflow-wrap:anywhere; }
+.src-list li:last-child{ border-bottom:none; }
+.src-pub, .src-org{ color:var(--sub); font-size:.85em; }
+.src-org{ color:var(--ink); font-weight:700; font-size:.95em; }
+a.ext{ color:var(--aqua); text-decoration:underline; padding:4px 0; display:inline-block; min-height:32px; }
+p.cf-note{ margin:8px 0 0; font-size:.85em; }
+.legend-list{ list-style:none; margin:0; padding:0; }
+.legend-list li{ display:flex; flex-direction:column; gap:4px; margin:0 0 10px; }
+.legend-t{ font-size:.9em; }
+
+/* 内見 */
+.add-row{ display:flex; gap:8px; margin:8px 0 12px; }
+.add-row input{ flex:1; min-width:0; min-height:52px; font-size:1em; font-family:inherit; padding:8px 10px; border:2px solid var(--line); border-radius:10px; background:var(--card); color:var(--ink); }
+.prop-btn{ flex:1; min-height:52px; text-align:left; border:none; background:none; color:var(--ink); font-family:inherit; font-size:1.05em; font-weight:700; }
+.prop-list li{ border-color:var(--brand); }
+.empty-li{ color:var(--sub); justify-content:center; }
+.view-btn{ margin-top:6px; }
+.fold-btn{ justify-content:flex-start; margin:8px 0; }
+.bring-list{ list-style:none; margin:0 0 8px; padding:0; }
+.bring-list li{ background:var(--card); border:1.5px solid var(--line); border-radius:10px; padding:8px 10px; margin:0 0 6px; display:flex; flex-direction:column; gap:2px; }
+.nk-group{ margin:16px 0 0; }
+.nk-gh{ font-size:1.05em; margin:0 0 4px; border-left:6px solid var(--brand); padding-left:8px; }
+.nk-rows{ list-style:none; margin:6px 0 0; padding:0; }
+.nk-row{ background:var(--card); border:2px solid var(--line); border-radius:12px; padding:6px 10px 8px; margin:0 0 8px; }
+.nk-row.fit{ border-color:var(--brand); }
+.nk-row.on{ background:var(--green-lite); }
+.nk-check{ display:flex; gap:10px; align-items:flex-start; width:100%; text-align:left; min-height:48px; border:none; background:none; color:var(--ink); font-family:inherit; font-size:1em; font-weight:700; padding:6px 0; margin:0; }
+.nk-check.ro{ display:block; }
+.nk-box{ flex:none; font-size:1.35em; line-height:1.1; color:var(--brand); }
+.nk-hint{ margin:0 0 4px; color:var(--sub); font-size:.9em; line-height:1.65; }
+.link-btn{ display:block; text-align:left; min-height:44px; border:none; background:none; color:var(--aqua); text-decoration:underline; font-family:inherit; font-size:.9em; padding:4px 0; }
+
+/* わたしの条件 */
+.small-btn{ min-height:44px; min-width:64px; padding:0 10px; font-size:.9em; }
+.cmp-wrap{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
+table.cmp{ border-collapse:collapse; min-width:100%; }
+table.cmp th, table.cmp td{ border:1.5px solid var(--line); padding:4px; text-align:center; vertical-align:middle; }
+table.cmp th.cmp-item{ text-align:left; font-weight:700; min-width:8em; background:var(--card); }
+table.cmp th.cmp-item.must{ color:var(--brand); }
+table.cmp th.cmp-prop{ font-size:.9em; min-width:5em; background:var(--green-lite); }
+.cmp-cell{ width:100%; min-width:52px; min-height:52px; border:none; background:var(--card); color:var(--ink); font-size:1.4em; font-weight:800; font-family:inherit; }
+
+/* 相談先 */
+.contact .ct-name{ margin:0 0 4px; font-size:1.05em; }
+.ct-phone{ margin:0 0 4px; font-weight:800; font-size:1.1em; }
+.call-link{ display:block; min-height:52px; line-height:52px; text-align:center; background:var(--brand); color:#fff; border-radius:12px; text-decoration:none; font-weight:800; margin:0 0 8px; }
+.ct-text{ margin:0 0 4px; }
+.ct-hours{ margin:0 0 4px; }
+.ct-find{ margin:0 0 4px; font-size:.92em; line-height:1.65; }
+.contact.fit{ border-color:var(--brand); }
+.contact a.ct-link{ display:block; }
+.contact .fit-mark{ vertical-align:middle; }
