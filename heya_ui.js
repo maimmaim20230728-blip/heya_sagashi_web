@@ -154,7 +154,12 @@
     return ov;
   }
 
-  /* 出典の一覧（組織の名前とトップのURL。Play の政府関連の情報アプリの要件） */
+  /* 出典の一覧（組織の名前とトップのURL。Play の政府関連の情報アプリの要件）。
+     出すのはサイト（p の無い組織）だけ。サブドメインの組織は親のサイトにまとめてある（_build_data.js）。
+     並び（国の機関→裁判所→公的な法人→都道府県→市区町村）とURLは、Play の説明文（store/_listing.js）と同じ */
+  function sites(){ return (D.orgs || []).filter(function(o){ return !o.p; }); }
+  /* 見せるURLは、うしろの「/」を取った形（説明文と同じ文字にする） */
+  function siteUrl(u){ return String(u).replace(/\/$/, ''); }
   function openSources(api){
     var ov = overlay(api, 'src-ov');
     var box = api.el('div', 'src-box');
@@ -162,18 +167,22 @@
     h.setAttribute('tabindex', '-1');
     box.appendChild(h);
     box.appendChild(api.el('p', 'notapp-p', api.T('screen.common.notApp')));
-    box.appendChild(api.el('p', 'hint', api.T('screen.common.sourcesLead')));
+    var all = sites();
+    box.appendChild(api.el('p', 'hint', String(api.T('screen.common.sourcesLead')).replace('{n}', all.length)));
+    box.appendChild(api.el('p', 'hint', api.T('screen.common.sourcesSub')));
     var asOf = (api.lang === 'en' && D.asOfEn) ? D.asOfEn : D.asOf;
     if(asOf) box.appendChild(api.el('p', 'hint', asOf));
-    ['gov','pub','court','local'].forEach(function(g){
-      var list = D.orgs.filter(function(o){ return o.g === g; });
+    ['gov','court','pub','pref','city'].forEach(function(g){
+      var list = all.filter(function(o){ return o.lv === g; });
       if(!list.length) return;
+      /* 1サイト1行（石川県は2つのドメインなので2行。行の数＝説明文のURLの数） */
       box.appendChild(api.el('h3', 'sec-h', api.T('screen.common.groups.' + g)));
       var ul = api.el('ul', 'src-list');
       list.forEach(function(o){
         var li = api.el('li', '');
-        li.appendChild(api.el('span', 'src-org', api.lang === 'en' ? o.en : o.ja));
-        li.appendChild(link(api, o.url, o.url));
+        var nm = api.lang === 'en' ? o.en : o.ja, note = api.lang === 'en' ? o.noteEn : o.note;
+        li.appendChild(api.el('span', 'src-org', nm + (note ? (api.lang === 'en' ? ', ' + note : '：' + note) : '')));
+        li.appendChild(link(api, o.url, siteUrl(o.url)));
         ul.appendChild(li);
       });
       box.appendChild(ul);

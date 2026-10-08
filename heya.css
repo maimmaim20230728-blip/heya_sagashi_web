@@ -144,6 +144,9 @@ p.cf-note{ margin:8px 0 0; font-size:.85em; }
 .nk-box{ flex:none; font-size:1.35em; line-height:1.1; color:var(--brand); }
 .nk-hint{ margin:0 0 4px; color:var(--sub); font-size:.9em; line-height:1.65; }
 .link-btn{ display:block; text-align:left; min-height:44px; border:none; background:none; color:var(--aqua); text-decoration:underline; font-family:inherit; font-size:.9em; padding:4px 0; }
+/* 行の出典（2026-10-08 Play の政府関連の情報の要件。書いたことの根拠のページを、行から開けるように） */
+.nk-src{ margin:2px 0 0; font-size:.85em; color:var(--sub); line-height:1.5; }
+.nk-src a.ext{ display:block; overflow-wrap:anywhere; }
 
 /* わたしの条件 */
 .small-btn{ min-height:44px; min-width:64px; padding:0 10px; font-size:.9em; }

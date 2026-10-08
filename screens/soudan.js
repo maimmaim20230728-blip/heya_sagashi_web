@@ -45,7 +45,8 @@
       fp.appendChild(document.createTextNode(U.tx(ct, 'find', api)));
       box.appendChild(fp);
     }
-    (ct.urls || []).slice(0, 2).forEach(function(u, i){
+    /* URL は全部出す（2026-10-08。3つ目が文に書いた国の情報の根拠になっている窓口があるため。Play の政府関連の情報の要件） */
+    (ct.urls || []).forEach(function(u, i){
       var on = U.orgName(api, u);
       var a = U.link(api, u, api.T(i ? 'screen.soudan.open2' : 'screen.soudan.open') + (on ? (api.lang === 'en' ? ' (' + on + ')' : '（' + on + '）') : ''));
       a.classList.add('ct-link');
@@ -58,6 +59,8 @@
       var U = window.HEYA_UI, D = U.D;
       c.appendChild(api.el('h1', 'scr-title', api.T('screen.soudan.title')));
       c.appendChild(api.el('p', 'hint', api.T('screen.soudan.lead')));
+      /* 役所の課の名前と「電話する」が並ぶ画面なので、ここにも短い免責（2026-10-08 Play の否承認への対応） */
+      c.appendChild(api.el('p', 'hint', api.T('screen.soudan.notApp')));
       var f = api.el('div', 'field');
       var lb = api.el('label', '', api.T('screen.soudan.prefH'));
       var sel = document.createElement('select');

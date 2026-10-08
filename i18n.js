@@ -58,7 +58,7 @@ var ja = {
       '書いたことは、この端末の中だけに'
     ],
     bodies:[
-      '賃貸の部屋を探す人が、自分に合う良い部屋を見つけるためのアプリです。探す前から、住んだあと、出ていくときまでに、することと確かめることを、やさしい言葉でまとめました。\n国や自治体のアプリではありません。法律の助言でもありません。中身は、国や自治体などの公式のページで確かめたものです。',
+      '賃貸の部屋を探す人が、自分に合う良い部屋を見つけるためのアプリです。探す前から、住んだあと、出ていくときまでに、することと確かめることを、やさしい言葉でまとめました。\nそよぎが独自に作ったもので、国や自治体のアプリではありません。国の機関、自治体、そのほかの公的な機関とは関係がなく、それらを代表するものでも、それらに認められたものでもありません。法律の助言でもありません。中身は、国や自治体などの公式のページで確かめたものです。出典の一覧は、ホームとせっていから開けます。',
       'ホームで「気になること」を選ぶと、合うカードに印がつきます。段差や移動のこと、保証人がいないこと、年齢のこと、日本語のことなど、いくつでも選べます。選ばなくても、全部のカードを見られます。',
       '段階（探す前に、内見、申込み、契約、入居、退去など）ごとに、カードが並んでいます。1枚に、することが1つです。見るところ、どうして、気をつけて、確かめかたが書いてあります。下の「公式のページ」から、もとのページを開けます。',
       '部屋を見に行く日（内見）のチェックシートです。見に行く部屋の呼び名を足すと、部屋ごとに□に印をつけて、メモを書けます。全部できなくても大丈夫です。★は、とくに大事な行です。',
@@ -70,11 +70,12 @@ var ja = {
   },
   screen: {
     common: {
-      notApp:'国や自治体のアプリではありません。法律の助言ではありません。中身は、国や自治体などの公式のページで確かめたものです。',
+      notApp:'このアプリは、そよぎが独自に作ったもので、国や自治体のアプリではありません。国の機関、自治体、そのほかの公的な機関とは関係がなく、それらを代表するものでも、それらに認められたものでもありません。法律の助言でもありません。中身は、国や自治体などの公式のページで確かめたものです。',
       sourcesBtn:'出典の一覧（公式のページ）',
       sourcesTitle:'出典の一覧',
-      sourcesLead:'このアプリの中身は、次の国の機関、公的な法人、都道府県と市区町村、裁判所の公式のページで確かめました。各カードの下に、確かめたページのリンクがあります。',
-      groups:{ gov:'国の機関', pub:'公的な法人', court:'裁判所', local:'都道府県と市区町村' },
+      sourcesLead:'カード、内見のシート、相談先の出典のリンクは、すべて次の{n}の公式サイトのページです。国の機関、裁判所、公的な法人、都道府県と市区町村のサイトだけです。確かめたページのリンクは、各カードの下と、内見のシートの出典のある行にあります。',
+      sourcesSub:'サブドメインのページ（同じ機関の地方の局や特設のページなど）は、その上のサイトに含めています。',
+      groups:{ gov:'国の機関', court:'裁判所', pub:'公的な法人', pref:'都道府県', city:'市区町村' },
       asOf:'確かめた日',
       fit:'合う',
       cardsCount:'カード {n}枚',
@@ -159,7 +160,8 @@ var ja = {
       call:'電話する',
       open:'公式のページ',
       open2:'あわせて見るページ',
-      lead:'困ったとき、迷ったときに相談できる窓口です。受付の時間は変わることがあるので、かける前に公式のページでも確かめてください。'
+      lead:'困ったとき、迷ったときに相談できる窓口です。受付の時間は変わることがあるので、かける前に公式のページでも確かめてください。',
+      notApp:'のせた窓口は、国や自治体などの公式のページで確かめたものです。このアプリは、これらの機関とは関係がありません。'
     },
     set: {
       sourcesRow:'出典の一覧',
@@ -219,7 +221,7 @@ var en = {
       'What you write stays on this device'
     ],
     bodies:[
-      'This app helps people renting a home in Japan find a good home that fits them. It sums up, in plain words, what to do and what to check, from before the search to after moving in and moving out.\nThis is not an app of the national or local government. It is not legal advice. The content was checked on official pages of the national government, local governments and public bodies.',
+      'This app helps people renting a home in Japan find a good home that fits them. It sums up, in plain words, what to do and what to check, from before the search to after moving in and moving out.\nIt was made independently by SOYOGI and is not a government app. It is not affiliated with, endorsed by, or representing any national or local government or other public body. It is not legal advice. The content was checked on official pages of the national government, local governments and public bodies. The list of sources opens from Home and Settings.',
       'On Home, choose what matters to you, and the cards that fit are marked. For example: steps and getting around, no guarantor, age, or the Japanese language. Choose as many as you like. You can see every card without choosing.',
       'Cards are grouped by stage: before the search, viewing, applying, the contract, moving in, moving out and more. Each card has one thing to do, with what to look at, why, what to watch for and how to check. Open the original official pages from the bottom of each card.',
       'This is the checklist for the day you go to see a home (a viewing). Add a name for each home you see, then tick the boxes and write notes for each one. You do not have to do everything. A star marks the most important rows.',
@@ -231,11 +233,12 @@ var en = {
   },
   screen: {
     common: {
-      notApp:'This is not an app of the national or local government, and it is not legal advice. The content was checked on official pages of the national government, local governments and public bodies.',
+      notApp:'This app was made independently by SOYOGI. It is not a government app. It is not affiliated with, endorsed by, or representing any national or local government or other public body. It is not legal advice. The content was checked on official pages of the national government, local governments and public bodies.',
       sourcesBtn:'List of sources (official pages)',
       sourcesTitle:'List of sources',
-      sourcesLead:'The content of this app was checked on the official pages of the following national government bodies, public corporations, prefectures and municipalities, and courts. Each card links to the pages that were checked.',
-      groups:{ gov:'National government', pub:'Public corporations', court:'Courts', local:'Prefectures and municipalities' },
+      sourcesLead:'Every source link in the cards, the viewing checklist and the help desks goes only to pages of the following {n} official websites of national government bodies, courts, public corporations, prefectures and municipalities. The pages that were checked are linked under each card and under the checklist rows that have sources.',
+      sourcesSub:'Pages on a subdomain of a listed site (such as a regional bureau or special site of the same body) are counted as part of that site.',
+      groups:{ gov:'National government', court:'Courts', pub:'Public corporations', pref:'Prefectures', city:'Municipalities' },
       asOf:'Checked on',
       fit:'Fits',
       cardsCount:'{n} cards',
@@ -320,7 +323,8 @@ var en = {
       call:'Call',
       open:'Official page',
       open2:'Related page',
-      lead:'Places to ask when you are in trouble or unsure. Opening hours can change, so please also check the official page before calling.'
+      lead:'Places to ask when you are in trouble or unsure. Opening hours can change, so please also check the official page before calling.',
+      notApp:'These desks were checked on official pages of national and local government bodies and other public bodies. This app is not affiliated with any of them.'
     },
     set: {
       sourcesRow:'List of sources',

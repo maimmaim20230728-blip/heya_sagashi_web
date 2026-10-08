@@ -79,6 +79,13 @@
           api.Tap.bind(cb, function(){ U.openCard(api, k); });
           li.appendChild(cb);
         });
+        /* 出典（2026-10-08 Play の否承認への対応。行に書いた国や自治体の情報の根拠のページを、行から開けるように） */
+        if((r.sources || []).length){
+          var sp = api.el('div', 'nk-src');
+          sp.appendChild(api.el('span', 'nk-src-lbl', api.T('screen.common.sources')));
+          r.sources.forEach(function(s){ sp.appendChild(U.link(api, s.url, s.title + (s.publisher ? (api.lang === 'en' ? ' (' + s.publisher + ')' : '（' + s.publisher + '）') : ''))); });
+          li.appendChild(sp);
+        }
         ul.appendChild(li);
       });
       sec.appendChild(ul);
