@@ -103,7 +103,7 @@
               q.marks = q.marks || {};
               var nv = MARKS[(MARKS.indexOf(q.marks[it.id] || '') + 1) % MARKS.length];
               if(nv) q.marks[it.id] = nv; else delete q.marks[it.id];
-              api.save('props', all);
+              if(!api.save('props', all)){ api.toast(api.T('common.storageFull')); return; }   // 保存できなければ印を変えない(2026-10-30)
               b.textContent = SHOW[nv];
               b.setAttribute('aria-label', p.name + ' / ' + it.text + (nv ? ' ' + SHOW[nv] : ''));
             });

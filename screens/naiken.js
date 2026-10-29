@@ -14,7 +14,8 @@
     function saveProp(){
       var all = api.load('props', []) || [];
       for(var i = 0; i < all.length; i++){ if(all[i].id === prop.id){ all[i] = prop; break; } }
-      if(!api.save('props', all)) api.toast(api.T('common.storageFull'));
+      if(!api.save('props', all)){ api.toast(api.T('common.storageFull')); return false; }
+      return true;   // 2026-10-30: 呼び出し側が「ほぞんしました」を出すかを決められるように
     }
     var ov = U.overlay(api, 'sheet-ov');
     ov._onclose = onclose || null;
@@ -118,14 +119,17 @@
       api.Tap.bind(eok, function(){
         var v = ein.value.trim();
         if(!v){ api.toast(api.T('screen.naiken.noName')); return; }
-        prop.name = v.slice(0, 40); saveProp(); h.textContent = prop.name;
+        var before = prop.name;
+        prop.name = v.slice(0, 40);
+        if(!saveProp()){ prop.name = before; return; }   // 保存できなければ「いっぱい」だけ(欄は開いたまま・名前は元のまま)
+        h.textContent = prop.name;
         ed.classList.add('hidden'); api.toast(api.T('common.saved'));
       });
       api.Tap.bind(dl, function(){
         api.ask(api.T('screen.naiken.delConfirm'), function(ok){
           if(!ok) return;
           var all = (api.load('props', []) || []).filter(function(p){ return p.id !== prop.id; });
-          api.save('props', all);
+          if(!api.save('props', all)){ api.toast(api.T('common.storageFull')); return; }   // 消せなかったら「けしました」を出さない
           api.toast(api.T('common.deleted'));
           if(ov.parentNode) ov.parentNode.removeChild(ov);
           if(ov._onclose) ov._onclose();

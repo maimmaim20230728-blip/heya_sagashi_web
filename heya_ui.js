@@ -30,7 +30,7 @@
     if(k === 'safety'){ safetyOn = !!on; return; }
     var list = getConcerns(api).filter(function(x){ return x !== 'safety' && x !== k; });
     if(on) list.push(k);
-    api.save('concerns', list);
+    if(!api.save('concerns', list)) api.toast(api.T('common.storageFull'));   // 保存できないことを その場で知らせる(2026-10-30)
   }
   function fits(item, sel){
     if(!sel.length) return false;
@@ -41,7 +41,7 @@
 
   /* たしかめた印（カードごと。数や割合は出さない） */
   function isDone(api, key){ var d = api.load('done', {}); return !!(d && d[key]); }
-  function setDone(api, key, on){ var d = api.load('done', {}) || {}; if(on) d[key] = 1; else delete d[key]; api.save('done', d); }
+  function setDone(api, key, on){ var d = api.load('done', {}) || {}; if(on) d[key] = 1; else delete d[key]; if(!api.save('done', d)) api.toast(api.T('common.storageFull')); }
 
   function strengthTag(api, s){
     var code = STRENGTH[s] || 'tip';

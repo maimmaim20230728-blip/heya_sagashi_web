@@ -96,7 +96,7 @@
       PREFS.forEach(function(p){ var o = document.createElement('option'); o.value = p[0]; o.textContent = api.lang === 'en' ? p[2] : p[1]; sel.appendChild(o); });
       var cur = api.load('prefecture', '') || '';
       sel.value = cur;
-      sel.addEventListener('change', function(){ api.save('prefecture', sel.value); draw(); });
+      sel.addEventListener('change', function(){ if(!api.save('prefecture', sel.value)) api.toast(api.T('common.storageFull')); draw(); });   // 表示は変える・覚えられないことだけ知らせる(2026-10-30)
       f.appendChild(lb); f.appendChild(sel);
       c.appendChild(f);
       var out = api.el('div', 'sd-out');
