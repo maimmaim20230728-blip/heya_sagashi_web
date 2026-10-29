@@ -9,7 +9,7 @@
      変えたら README の「シェルの変更点」に書く */
 (function(){
 
-var VER = '0.1.1';                 // 🔴 更新のたびに上げる(build.gradle の versionName / sw.js の CACHE と一緒に)
+var VER = '0.1.2';                 // 🔴 更新のたびに上げる(build.gradle の versionName / sw.js の CACHE と一緒に)
 var APP_KEY = 'heya_sagashi';        // バックアップの識別(別アプリのファイルを読まない)
 var LS = 'heya.';
 var LS_PREF = LS + 'pref.v1';
@@ -603,20 +603,66 @@ function exportBackup(){
   setTimeout(function(){ URL.revokeObjectURL(a.href); }, 3000);
   toast(T('set.exported'));
 }
+/* よみこむ(2026-10-30): 壊れたファイルは何も変えずに「よみこめませんでした」・確かめの窓のあとで書く・
+   書けなかったら元に戻して成功と出さない。保存の形は screens/*.js が使っているものと同じ
+   (props / joken / concerns / prefecture / done / guide.v1)。知らないキーは入れない */
+function isPlainObj(v){ return !!v && typeof v === 'object' && !Array.isArray(v); }
+function isStr(v){ return typeof v === 'string'; }
+function isMarkMap(v){   // { 行のkey: 1 } や { 条件のid: 'o' } のような、値が文字・数・真偽だけの入れ物
+  if(!isPlainObj(v)) return false;
+  return Object.keys(v).every(function(k){ var x = v[k]; return isStr(x) || typeof x === 'number' || typeof x === 'boolean'; });
+}
+function isIdTextList(a){ return Array.isArray(a) && a.every(function(x){ return isPlainObj(x) && isStr(x.id) && isStr(x.text); }); }
+var IMPORT_SHAPES = {
+  'props': function(v){
+    return Array.isArray(v) && v.every(function(p){
+      return isPlainObj(p) && isStr(p.id) && isStr(p.name) && (p.memo === undefined || isStr(p.memo)) &&
+        (p.ticks === undefined || isMarkMap(p.ticks)) && (p.marks === undefined || isMarkMap(p.marks));
+    });
+  },
+  'joken': function(v){
+    return isPlainObj(v) && (v.must === undefined || isIdTextList(v.must)) && (v.want === undefined || isIdTextList(v.want)) &&
+      (v.places === undefined || isIdTextList(v.places)) && (v.rent === undefined || isStr(v.rent));
+  },
+  'concerns': function(v){ return Array.isArray(v) && v.every(isStr); },
+  'prefecture': isStr,
+  'done': isMarkMap,
+  'guide.v1': function(v){ return v === true; }
+};
 function importBackup(e){
   var f = e.target.files && e.target.files[0];
   if(!f) return;
   var r = new FileReader();
   r.onload = function(){
+    var d, data = {};
     try{
-      var d = JSON.parse(r.result);
-      if(d.app !== APP_KEY) throw new Error('different app');
-      if(d.data && typeof d.data === 'object'){ for(var k in d.data){ saveJSON(LS + k, d.data[k]); } }
-      pref = sanitizePref(d.pref);
-      savePref();
+      d = JSON.parse(r.result);
+      if(!isPlainObj(d) || d.app !== APP_KEY) throw new Error('different app');
+      if(!isPlainObj(d.data)) throw new Error('no data');
+      var fileKeys = Object.keys(d.data);
+      fileKeys.forEach(function(k){
+        if(!Object.prototype.hasOwnProperty.call(IMPORT_SHAPES, k)) return;   // 知らないキーは入れない
+        if(!IMPORT_SHAPES[k](d.data[k])) throw new Error('bad shape: ' + k);   // 1つでも形が違えば、ファイルごと受けつけない
+        data[k] = d.data[k];
+      });
+      if(fileKeys.length && !Object.keys(data).length) throw new Error('nothing usable');   // 中身があるのに使えるものが無い(空の書き出しだけは通す)
+    }catch(err){ toast(T('set.importFail')); return; }
+    askBox(T('set.importConfirm'), function(ok){   // Play版はアプリの中の窓(はい/いいえ)・Web版は window.confirm
+      if(!ok) return;
+      var newPref = sanitizePref(d.pref), old = {}, names = Object.keys(data).map(function(k){ return LS + k; }).concat([LS_PREF]);
+      var good = true, i;
+      try{ names.forEach(function(n){ old[n] = localStorage.getItem(n); }); }catch(_){ toast(T('set.importFail')); return; }
+      for(i = 0; i < names.length - 1 && good; i++){ good = saveJSON(names[i], data[names[i].slice(LS.length)]); }
+      if(good) good = saveJSON(LS_PREF, newPref);
+      if(!good){   // 書けなかった(容量オーバー等)=元に戻して、成功とは出さない
+        names.forEach(function(n){ try{ if(old[n] == null) localStorage.removeItem(n); else localStorage.setItem(n, old[n]); }catch(_){} });
+        toast(T('set.importFail'));
+        return;
+      }
+      pref = newPref;
       applyAll(true);
       toast(T('set.imported'));
-    }catch(err){ toast(T('set.importFail')); }
+    }, true);
   };
   r.readAsText(f);
   e.target.value = '';

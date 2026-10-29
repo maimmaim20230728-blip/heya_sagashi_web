@@ -20,6 +20,33 @@
     list.forEach(function(ct){ (U.fits(ct, sel) ? a : b).push({ ct: ct, fit: U.fits(ct, sel) }); });
     return a.concat(b);
   }
+  /* 窓口の「電話」の文から、かけられる番号を取り出す([{ tel, label }])。🔴間違った番号にかけさせないことが最優先
+     ・（ ）の中と「内線」のあとの番号(内線4784・ライン365 など)は番号にしない
+     ・番号は 10〜11桁。ほかは # で始まる短縮番号(#8008 など)と、公的な短い番号 110・118・119・171・188・189 だけ
+     ・全角の数字・ハイフン・括弧は半角にそろえてから見る */
+  var SHORT_PUBLIC = { '110':1, '118':1, '119':1, '171':1, '188':1, '189':1 };
+  function extractTels(text){
+    var s = String(text == null ? '' : text);
+    try{ s = s.normalize('NFKC'); }catch(_){}
+    s = s.replace(/(\d)[\u30fc\u2010-\u2015\u2212](?=\d)/g, '$1-');
+    var flat = '', depth = 0, i, ch;
+    for(i = 0; i < s.length; i++){
+      ch = s.charAt(i);
+      if(ch === '('){ depth++; flat += ' '; }
+      else if(ch === ')'){ depth = Math.max(0, depth - 1); flat += ' '; }
+      else flat += depth ? ' ' : ch;
+    }
+    flat = flat.replace(/内線\s*[:：]?\s*[\d\-]+/g, ' ');
+    var out = [];
+    (flat.match(/#?\d+(?:-\d+)*/g) || []).forEach(function(t){
+      var digits = t.replace(/\D/g, ''), tel = null;
+      if(t.charAt(0) === '#'){ if(digits.length >= 3 && digits.length <= 6) tel = '%23' + digits; }
+      else if(digits.length >= 10 && digits.length <= 11) tel = digits;
+      else if(t.indexOf('-') < 0 && SHORT_PUBLIC[digits]) tel = digits;
+      if(tel && !out.some(function(o){ return o.tel === tel; })) out.push({ tel: tel, label: t });
+    });
+    return out;
+  }
   function contactCard(api, ct, fit){
     var U = window.HEYA_UI;
     var box = api.el('div', 'card contact' + (fit ? ' fit' : ''));
@@ -27,13 +54,13 @@
     if(fit){ hd.appendChild(document.createTextNode(' ')); hd.appendChild(api.el('span', 'fit-mark', api.T('screen.common.fit'))); }
     box.appendChild(hd);
     if(ct.phone){
-      var tels = String(ct.phone).match(/(#?\d[\d-]{1,14}\d)/g) || [];
+      var tels = extractTels(ct.phone);
       var pp = api.el('p', 'ct-phone', U.tx(ct, 'phone', api));
       box.appendChild(pp);
-      tels.slice(0, 2).forEach(function(t){
+      tels.slice(0, 3).forEach(function(t){
         var a = document.createElement('a');
-        a.className = 'call-link'; a.href = 'tel:' + t.replace(/-/g, '').replace('#', '%23');
-        a.textContent = api.T('screen.soudan.call') + ' ' + t;
+        a.className = 'call-link'; a.href = 'tel:' + t.tel;
+        a.textContent = api.T('screen.soudan.call') + ' ' + t.label;
         box.appendChild(a);
       });
     }

@@ -39,6 +39,7 @@ var ja = {
     bkHint:'あたらしい スマホに うつるときは、「かきだす」で ファイルを ほぞんして、あたらしい スマホで「よみこむ」を おしてください。',
     bkExport:'かきだす', bkImport:'よみこむ',
     exported:'かきだしました ✓', imported:'よみこみました ✓', importFail:'よみこめませんでした',
+    importConfirm:'ファイルにある記録で、この端末の同じ記録を書きかえます。よろしいですか？',
     note:'書いたことは すべて この端末の中だけに ほぞんされます。どこにも 送られません。',
     privacy:'プライバシーポリシー',
     credit:'アプリ開発：介護と支援の相談どころ そよぎ'
@@ -204,6 +205,7 @@ var en = {
     bkHint:'When you move to a new phone, tap "Export" to save a file, then tap "Import" on the new phone.',
     bkExport:'Export', bkImport:'Import',
     exported:'Exported ✓', imported:'Imported ✓', importFail:'Could not import',
+    importConfirm:'Records in the file will replace the same records on this device. Continue?',
     note:'Everything you write is stored only on this device. Nothing is sent anywhere.',
     privacy:'Privacy policy',
     credit:'Developed by SOYOGI, a care and support consultation service'
