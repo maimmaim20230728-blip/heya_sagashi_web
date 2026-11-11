@@ -84,6 +84,20 @@
     document.body.appendChild(ov);
     return ov;
   }
+  /* 重ねた画面の中身を build(api) → { box, h } で作って載せる。言葉を切りかえたら _redraw で同じ画面を訳し直す(2026-11-11)。
+     最初だけ見出しにフォーカス・訳し直しのときは位置も動かさない */
+  function mount(ov, api, build){
+    var cur = null;
+    function put(a, again){
+      var b = build(a);
+      if(cur && cur.parentNode === ov) ov.removeChild(cur);
+      ov.insertBefore(b.box, ov.firstChild);
+      cur = b.box;
+      if(!again){ ov.scrollTop = 0; try{ b.h.focus(); }catch(_){} }
+    }
+    ov._redraw = function(a){ var st = ov.scrollTop; put(a, true); ov.scrollTop = st; };
+    put(api, false);
+  }
 
   /* カードを開く */
   function openCard(api, key, onclose){
@@ -91,6 +105,7 @@
     if(!c) return;
     var ov = overlay(api, 'card-ov');
     ov._onclose = onclose || null;
+    mount(ov, api, function(api){
     var box = api.el('article', 'card-full');
     var head = api.el('div', 'cf-head');
     head.appendChild(api.el('span', 'cf-no', String(cardIndex(key) + 1)));
@@ -148,9 +163,8 @@
     box.appendChild(ss);
     box.appendChild(api.el('p', 'cf-note hint', api.T('screen.common.cardNote')));
     box.appendChild(api.el('p', 'cf-note hint', api.T('screen.common.notApp')));
-    ov.insertBefore(box, ov.firstChild);
-    ov.scrollTop = 0;
-    try{ h.focus(); }catch(_){}
+    return { box: box, h: h };
+    });
     return ov;
   }
 
@@ -162,6 +176,7 @@
   function siteUrl(u){ return String(u).replace(/\/$/, ''); }
   function openSources(api){
     var ov = overlay(api, 'src-ov');
+    mount(ov, api, function(api){
     var box = api.el('div', 'src-box');
     var h = api.el('h2', 'scr-title', api.T('screen.common.sourcesTitle'));
     h.setAttribute('tabindex', '-1');
@@ -198,8 +213,8 @@
       lg.appendChild(li);
     });
     box.appendChild(lg);
-    ov.insertBefore(box, ov.firstChild);
-    try{ h.focus(); }catch(_){}
+    return { box: box, h: h };
+    });
     return ov;
   }
 
@@ -233,6 +248,8 @@
       if(document.documentElement.classList.contains('qx-hide')) return;   // 読むあいだに すぐ閉じる が押された
       var ov = overlay(api, 'pp-ov');
       ov.insertBefore(box, ov.firstChild);
+      /* 言葉を切りかえたら、この画面をとじて、いまの言葉で開き直す */
+      ov._redraw = function(a){ if(ov.parentNode) ov.parentNode.removeChild(ov); openPrivacy(a); };
       try{ h.focus(); }catch(_){}
     }).catch(fail);
   }
@@ -262,7 +279,7 @@
     cardIndex: cardIndex, cardByKey: cardByKey,
     getConcerns: getConcerns, setConcern: setConcern, fits: fits,
     isDone: isDone, setDone: setDone,
-    strengthTag: strengthTag, link: link, orgName: orgName, notApp: notApp, overlay: overlay,
+    strengthTag: strengthTag, link: link, orgName: orgName, notApp: notApp, overlay: overlay, mount: mount,
     openCard: openCard, openSources: openSources, openPrivacy: openPrivacy,
     clearSafety: function(){ safetyOn = false; }
   };

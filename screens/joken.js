@@ -45,7 +45,7 @@
         }
         api.Tap.bind(add, function(){
           var v = inp.value.trim();
-          if(!v) return;
+          if(!v){ api.toast(api.T('screen.joken.noText')); return; }   // 空のまま押しても無反応にしない(2026-11-11)
           J[field].push({ id:newId(), text:v.slice(0, 60) });
           save(); inp.value = ''; api.markSaved(); draw(); drawCompare();
         });

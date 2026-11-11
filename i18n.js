@@ -101,6 +101,7 @@ var ja = {
       lead:'自分に合う良い部屋を見つけるために、探す前から住んだあとまでに、することと確かめることをまとめました。',
       concernsH:'気になること',
       concernsHint:'選ぶと、合うカードに印がつきます。いくつでも選べます。選ばなくても使えます。「居場所を知られたくない」は、アプリを閉じると消えます（端末に残しません）。',
+      guideAgain:'つかいかたを もういちど 見る',
       stagesH:'すすめかた',
       stagesHint:'段階を押すと、その段階のカードが出ます。'
     },
@@ -128,7 +129,15 @@ var ja = {
       checked:'印 {n}',
       starHint:'★は、とくに大事な行です。',
       fitOnly:'当てはまるときだけ使う行です。',
-      noName:'呼び名を入れてください'
+      noName:'呼び名を入れてください',
+      exportBtn:'この部屋のシートを かきだす',
+      exportHint:'印・メモ・条件の○△×を、文字だけの1まいにします。不動産会社に見せるときに使えます。かきだすのは、押したときだけです。',
+      exportChecked:'確かめたこと',
+      exportMemo:'メモ',
+      exportJoken:'わたしの条件（◆はゆずれないこと）',
+      exportNone:'なし',
+      exportNoMark:'印なし',
+      exportFoot:'このシートは、わたしに合う部屋さがし・そよぎで、端末の中だけで作りました。'
     },
     joken: {
       title:'わたしの条件',
@@ -144,7 +153,8 @@ var ja = {
       compareHint:'ます目を押すたびに、○ → △ → × → 空白 と変わります。',
       noProps:'「内見」で見に行く部屋を足すと、ここで並べられます。',
       noItems:'条件を書くと、ここで並べられます。',
-      delItem:'消す'
+      delItem:'消す',
+      noText:'ことばを入れてください'
     },
     soudan: {
       title:'相談先',
@@ -157,6 +167,9 @@ var ja = {
       localLead:'都道府県や市区町村ごとにある窓口です。何を相談できるかと、探し方をのせています。',
       localShow:'住む地域で探す窓口を見る',
       localHide:'住む地域で探す窓口をとじる',
+      restShow:'ほかの窓口（{n}件）を見る',
+      restHide:'ほかの窓口をとじる',
+      tags:{ '24h':'24時間', night:'夜の受付あり', weekday:'平日のみ' },
       find:'探し方',
       call:'電話する',
       open:'公式のページ',
@@ -265,6 +278,7 @@ var en = {
       lead:'What to do and what to check, from before the search to after moving in, to find a good home that fits.',
       concernsH:'What matters to you',
       concernsHint:'Choose to mark the cards that fit. Choose as many as you like, or none. "Keeping the new address private" is cleared when the app closes (not kept on the device).',
+      guideAgain:'Show how to use again',
       stagesH:'Steps',
       stagesHint:'Tap a stage to see its cards.'
     },
@@ -292,7 +306,15 @@ var en = {
       checked:'Ticked {n}',
       starHint:'A star marks the most important rows.',
       fitOnly:'Use these rows only when they apply.',
-      noName:'Please enter a name'
+      noName:'Please enter a name',
+      exportBtn:'Save this home as a sheet',
+      exportHint:'Your marks, notes and the ○△× for your conditions go into one plain text sheet. You can show it to a real estate agent. It is saved only when you tap.',
+      exportChecked:'Checked',
+      exportMemo:'Notes',
+      exportJoken:'My conditions (◆ = cannot give up)',
+      exportNone:'None',
+      exportNoMark:'No mark',
+      exportFoot:'This sheet was made only on this device, in A Home That Fits Me - SOYOGI.'
     },
     joken: {
       title:'My conditions',
@@ -308,7 +330,8 @@ var en = {
       compareHint:'Each tap on a box changes it: ○ → △ → × → blank.',
       noProps:'Add homes to see under "Viewing" to compare them here.',
       noItems:'Write some conditions to compare homes here.',
-      delItem:'Delete'
+      delItem:'Delete',
+      noText:'Please write something'
     },
     soudan: {
       title:'Help desks',
@@ -321,6 +344,9 @@ var en = {
       localLead:'These desks exist in each prefecture or city. Here is what you can ask and how to find them.',
       localShow:'Show the desks to look for where you live',
       localHide:'Hide the desks to look for where you live',
+      restShow:'Show other desks ({n})',
+      restHide:'Hide other desks',
+      tags:{ '24h':'24 hours', night:'Open in the evening', weekday:'Weekdays only' },
       find:'How to find',
       call:'Call',
       open:'Official page',

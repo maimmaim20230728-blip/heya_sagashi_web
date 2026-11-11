@@ -9,7 +9,7 @@
      変えたら README の「シェルの変更点」に書く */
 (function(){
 
-var VER = '0.1.5';                 // 🔴 更新のたびに上げる(build.gradle の versionName / sw.js の CACHE と一緒に)
+var VER = '0.1.6';                 // 🔴 更新のたびに上げる(build.gradle の versionName / sw.js の CACHE と一緒に)
 var APP_KEY = 'heya_sagashi';        // バックアップの識別(別アプリのファイルを読まない)
 var LS = 'heya.';
 var LS_PREF = LS + 'pref.v1';
@@ -90,6 +90,9 @@ function applyI18n(){
   if(current !== 'set') renderScreen(current);   // 表示中の画面も訳し直す
   var gov = document.querySelector && document.querySelector('.guide-ov');
   if(gov && gov._draw) gov._draw();               // はじめての つかいかた も訳し直す
+  /* 開いているカード・内見シート・出典の一覧・プライバシーポリシーも訳し直す(背景だけ変わらないように・2026-11-11) */
+  var hov = document.querySelectorAll ? document.querySelectorAll('.heya-ov') : [];
+  for(var q = 0; q < hov.length; q++){ if(typeof hov[q]._redraw === 'function'){ try{ hov[q]._redraw(screenApi()); }catch(err){ console.error('overlay redraw error', err); } } }
   applyBarSpace();
 }
 
@@ -245,7 +248,8 @@ function screenApi(){
     speak: speak, stopSpeak: stopSpeak, canSpeak: canSpeak, vibrate: vibrate,
     lang: pref.lang,
     rtl: RTL_LANGS.indexOf(pref.lang) >= 0,
-    saveFile: nativeSaveFile,           // Play版の保存(一時フォルダ→共有の画面)。done('ok' | 'quiet' | 'fail')(2026-09-29)
+    exportText: exportTextFile,         // 文字だけのファイルを1つかきだす(2026-11-11)
+    saveFile: nativeSaveFile,         // Play版の保存(一時フォルダ→共有の画面)。done('ok' | 'quiet' | 'fail')(2026-09-29)
     markSaved: markSaved,               // 保存したら呼ぶ(戻るボタンの書きかけの確かめを出さない・2026-09-29)
     ask: askBox,                        // 確かめの窓(Play版はアプリの中・Web版は confirm)。ask(文, function(はい){...}, confirmが無いときの答え)
     backDefault: backDefault,           // 画面の back() が確かめのあとで「来た画面へ」を続けるとき
@@ -603,7 +607,27 @@ function exportBackup(){
   setTimeout(function(){ URL.revokeObjectURL(a.href); }, 3000);
   toast(T('set.exported'));
 }
-/* よみこむ(2026-10-30): 壊れたファイルは何も変えずに「よみこめませんでした」・確かめの窓のあとで書く・
+/* 文字だけのファイルを1つかきだす(2026-11-11・内見シートの1まい)。本人が押したときだけ。Play版は共有の画面・Web版は <a download>。
+   かきだせたら「かきだしました」・共有の画面を閉じたら何も出さない・書けなければ「ほぞんできませんでした」 */
+function exportTextFile(fname, text, label){
+  if(isNativeApp()){
+    nativeSaveFile(fname, text, true, label, function(r){
+      if(r === 'ok') toast(T('set.exported'));
+      else if(r === 'fail') toast(T('common.saveFail'));
+    });
+    return;
+  }
+  try{
+    var blob = new Blob([text], { type:'text/plain;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = fname;
+    a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 3000);
+    toast(T('set.exported'));
+  }catch(_){ toast(T('common.saveFail')); }
+}
+/* よみこむ(2026-10-30):壊れたファイルは何も変えずに「よみこめませんでした」・確かめの窓のあとで書く・
    書けなかったら元に戻して成功と出さない。保存の形は screens/*.js が使っているものと同じ
    (props / joken / concerns / prefecture / done / guide.v1)。知らないキーは入れない */
 function isPlainObj(v){ return !!v && typeof v === 'object' && !Array.isArray(v); }

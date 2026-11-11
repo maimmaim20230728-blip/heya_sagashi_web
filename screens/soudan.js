@@ -53,6 +53,12 @@
     var hd = api.el('h3', 'ct-name', U.tx(ct, 'name', api));
     if(fit){ hd.appendChild(document.createTextNode(' ')); hd.appendChild(api.el('span', 'fit-mark', api.T('screen.common.fit'))); }
     box.appendChild(hd);
+    /* 受付の時間の短い印(2026-11-11)。hours の文章から付けたもの(_tag_hours.js)。時間の文章そのものも下に出す */
+    if((ct.tags || []).length){
+      var tg = api.el('p', 'ct-tags');
+      ct.tags.forEach(function(k){ tg.appendChild(api.el('span', 'ct-tag ct-tag-' + k, api.T('screen.soudan.tags.' + k))); });
+      box.appendChild(tg);
+    }
     if(ct.phone){
       var tels = extractTels(ct.phone);
       var pp = api.el('p', 'ct-phone', U.tx(ct, 'phone', api));
@@ -101,7 +107,7 @@
       c.appendChild(f);
       var out = api.el('div', 'sd-out');
       c.appendChild(out);
-      var localOpen = false;
+      var localOpen = false, restOpen = false;
       function draw(){
         out.textContent = '';
         var code = sel.value;
@@ -111,7 +117,21 @@
           var name = api.lang === 'en' ? p[2] : p[1];
           out.appendChild(api.el('h2', 'sec-h', String(api.T('screen.soudan.prefListH')).replace('{p}', name)));
           var pd = (D.contacts.prefs || {})[code];
-          if(pd && pd.list && pd.list.length) fitFirst(pd.list, cs).forEach(function(x){ out.appendChild(contactCard(api, x.ct, x.fit)); });
+          if(pd && pd.list && pd.list.length){
+            var fl = fitFirst(pd.list, cs);
+            var fitN = fl.filter(function(x){ return x.fit; }).length;
+            var shown = fl;
+            /* 気になることに合う窓口があるときは、合う窓口を先にまとめ、ほかはたたむ(2026-11-11)。合うものが無い・選んでいないときは全部出す */
+            if(fitN && fitN < fl.length) shown = restOpen ? fl : fl.slice(0, fitN);
+            shown.forEach(function(x){ out.appendChild(contactCard(api, x.ct, x.fit)); });
+            if(fitN && fitN < fl.length){
+              var rb = api.el('button', 'btn fold-btn', (restOpen ? '▼ ' : '▶ ') + (restOpen ? api.T('screen.soudan.restHide') : String(api.T('screen.soudan.restShow')).replace('{n}', fl.length - fitN)));
+              rb.type = 'button';
+              rb.setAttribute('aria-expanded', restOpen ? 'true' : 'false');
+              api.Tap.bind(rb, function(){ restOpen = !restOpen; draw(); });
+              out.appendChild(rb);
+            }
+          }
           else out.appendChild(api.el('p', 'note', api.T('screen.soudan.prefPending')));
         }
         /* 住む地域で探す窓口（種類と探し方。数が多いので、たたんでおく） */

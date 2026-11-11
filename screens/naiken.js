@@ -7,8 +7,44 @@
 (function(){
   function newId(){ return 'p' + Date.now().toString(36) + Math.floor(Math.random() * 1e4).toString(36); }
 
+  var MARK = { o:'○', t:'△', x:'×' };
+  function sheetFileName(){
+    var d = new Date();
+    return 'heya-sheet-' + d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0') + '.txt';
+  }
+  /* 1まいの文字: 部屋の呼び名・確かめた行・メモ・条件ごとの印。点数や割合は出さない */
+  function sheetText(api, prop){
+    var U = window.HEYA_UI, S = U.D.sheet, T = api.T;
+    var L = [];
+    L.push(prop.name);
+    L.push(T('app.name'));
+    L.push('');
+    L.push(T('screen.naiken.exportChecked'));
+    var any = false;
+    S.rows.forEach(function(r){
+      if(prop.ticks && prop.ticks[r.key]){ any = true; L.push('・' + (r.star ? '★ ' : '') + U.tx(r, 'check', api)); }
+    });
+    if(!any) L.push(T('screen.naiken.exportNone'));
+    L.push('');
+    L.push(T('screen.naiken.exportMemo'));
+    L.push(prop.memo && String(prop.memo).trim() ? String(prop.memo).trim() : T('screen.naiken.exportNone'));
+    var J = api.load('joken', null) || {};
+    var items = (J.must || []).map(function(it){ return { it: it, must: true }; }).concat((J.want || []).map(function(it){ return { it: it, must: false }; }));
+    L.push('');
+    L.push(T('screen.naiken.exportJoken'));
+    if(!items.length) L.push(T('screen.naiken.exportNone'));
+    items.forEach(function(x){
+      var v = (prop.marks && prop.marks[x.it.id]) || '';
+      L.push('・' + (x.must ? '◆ ' : '') + x.it.text + '　' + (MARK[v] || T('screen.naiken.exportNoMark')));
+    });
+    L.push('');
+    L.push(T('screen.naiken.exportFoot'));
+    return L.join('\r\n') + '\r\n';
+  }
+
   function openSheet(api, propId, onclose){
     var U = window.HEYA_UI, D = U.D, S = D.sheet;
+    var mount = U.mount;
     var props = api.load('props', []) || [];
     var prop = propId ? props.filter(function(p){ return p.id === propId; })[0] : null;
     function saveProp(){
@@ -19,6 +55,7 @@
     }
     var ov = U.overlay(api, 'sheet-ov');
     ov._onclose = onclose || null;
+    mount(ov, api, function(api){
     var box = api.el('div', 'sheet-box');
     var h = api.el('h2', 'scr-title', prop ? prop.name : api.T('screen.naiken.title'));
     h.setAttribute('tabindex', '-1');
@@ -138,9 +175,18 @@
       row.appendChild(rn); row.appendChild(dl);
       box.appendChild(row);
       box.appendChild(ed);
+      /* 不動産会社に見せる用に、この部屋の印・メモ・条件の○△×を文字だけの1まいにして かきだす(本人が押したときだけ・端末の外へは出ない) */
+      var xb = api.el('button', 'btn wide export-btn', api.T('screen.naiken.exportBtn'));
+      xb.type = 'button';
+      api.Tap.bind(xb, function(){
+        var a2 = window.App ? window.App.api() : api;
+        a2.exportText(sheetFileName(), sheetText(a2, prop), a2.T('screen.naiken.exportBtn'));
+      });
+      box.appendChild(xb);
+      box.appendChild(api.el('p', 'hint', api.T('screen.naiken.exportHint')));
     }
-    ov.insertBefore(box, ov.firstChild);
-    try{ h.focus(); }catch(_){}
+    return { box: box, h: h };
+    });
   }
 
   window.SCREENS.register('naiken', {

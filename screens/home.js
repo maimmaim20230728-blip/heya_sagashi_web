@@ -8,6 +8,13 @@
       var U = window.HEYA_UI, D = U.D;
       c.appendChild(U.notApp(api));
       c.appendChild(api.el('p', 'home-lead', api.T('screen.home.lead')));
+      /* 「つかいかた」をもう一度(せっていの奥まで行かなくても開ける・2026-11-11) */
+      if(window.App && typeof window.App.guide === 'function'){
+        var gb = api.el('button', 'link-btn guide-again-btn', api.T('screen.home.guideAgain'));
+        gb.type = 'button';
+        api.Tap.bind(gb, function(){ window.App.guide(false); });
+        c.appendChild(gb);
+      }
 
       /* 気になること */
       c.appendChild(api.el('h2', 'sec-h', api.T('screen.home.concernsH')));
